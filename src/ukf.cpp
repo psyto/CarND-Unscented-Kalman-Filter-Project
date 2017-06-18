@@ -90,8 +90,8 @@ UKF::UKF() {
 	MatrixXd Xsig_pred_ = MatrixXd(n_x_, 2 * n_aug + 1);
 
 	Q_ = 0;
-	R_laser = 0;
-	R_radar = 0;
+	R_laser_ = 0;
+	R_radar_ = 0;
 	x_pred_ = 0;
 	P_pred_ = 0;
 	z_out_ = 0;
@@ -168,18 +168,10 @@ void UKF::Prediction(double delta_t) {
 	Complete this function! Estimate the object's location. Modify the state
 	vector, x_. Predict sigma points, the state, and the state covariance matrix.
 	*/
-	GenerateSigmaPoints(&Xsig);
-	AugmentedSigmaPoints(&Xsig_aug);
-	SigmaPointPrediction(&Xsig_pred);
-	PredictMeanAndCovariance(&x_pred, &P_pred);
-	PredictRadarMeasurement(&z_out, &S_out);
-}
 
-//**********
-// Generating Sigma Points
-//**********
-
-void UKF::GenerateSigmaPoints(MatrixXd* Xsig_out) {
+	//**********
+	// Generating Sigma Points
+	//**********
 
 	//calculate square root of P
 	MatrixXd A = P_.llt().matrixL();
@@ -194,16 +186,9 @@ void UKF::GenerateSigmaPoints(MatrixXd* Xsig_out) {
 		Xsig.col(i+1+n_x_) = x_ - sqrt(lambda_+n_x_) * A.col(i);
 	}
 
-	//write result
-  *Xsig_out = Xsig;
-
-}
-
-//**********
-// Augmentation
-//**********
-
-void UKF::AugmentedSigmaPoints(MatrixXd* Xsig_out) {
+	//**********
+	// Augmentation
+	//**********
 
 	//create augmented mean vector
 	VectorXd x_aug = VectorXd(7);
@@ -233,23 +218,16 @@ void UKF::AugmentedSigmaPoints(MatrixXd* Xsig_out) {
 		Xsig_aug.col(i+1+n_aug) = x_aug - sqrt(lambda_+n_aug) * L.col(i);
 	}
 
-	//write result
-  *Xsig_out = Xsig_aug;
-
-}
-
-//**********
-// Sigma Point Prediction
-//**********
-
-void UKF::SigmaPointPrediction(MatrixXd* Xsig_out) {
+	//**********
+	// Sigma Point Prediction
+	//**********
 
 	double delta_t = 0.1; //time diff in sec
 
 	//predict sigma points
 	for (int i = 0; i< 2*n_aug+1; i++)
 	{
-		//extract values for better readability
+			//extract values for better readability
 		double p_x = Xsig_aug(0,i);
 		double p_y = Xsig_aug(1,i);
 		double v = Xsig_aug(2,i);
@@ -291,16 +269,9 @@ void UKF::SigmaPointPrediction(MatrixXd* Xsig_out) {
 		Xsig_pred(4,i) = yawd_p;
 	}
 
-	//write result
-  *Xsig_out = Xsig_pred;
-
-}
-
-//**********
-// Predicted Mean and Covariance
-//**********
-
-void UKF::PredictMeanAndCovariance(VectorXd* x_out, MatrixXd* P_out) {
+	//**********
+	// Predicted Mean and Covariance
+	//**********
 
 	//predicted state mean
 	x_.fill(0.0);
@@ -321,16 +292,9 @@ void UKF::PredictMeanAndCovariance(VectorXd* x_out, MatrixXd* P_out) {
 		P_ = P_ + weights_(i) * x_diff * x_diff.transpose() ;
 	}
 
-	//write result
-  *x_out = x_;
-  *P_out = P_;
-}
-
-//**********
-// Predict Radar Measurement
-//**********
-
-void UKF::PredictRadarMeasurement(VectorXd* z_out, MatrixXd* S_out) {
+	//**********
+	// Predict Radar Measurement
+	//**********
 
 	//create matrix_ for sigma points in measurement space
 	MatrixXd Zsig = MatrixXd(n_z_, 2 * n_aug_ + 1);
@@ -380,10 +344,6 @@ void UKF::PredictRadarMeasurement(VectorXd* z_out, MatrixXd* S_out) {
 					0, std_radphi*std_radphi, 0,
 					0, 0,std_radrd*std_radrd;
 	S = S + R;
-
-	//write result
-  *z_out = z_pred;
-  *S_out = S;
 
 }
 
