@@ -67,6 +67,13 @@ public:
   ///* Sigma point spreading parameter
   double lambda_;
 
+	VectorXd z_pred;
+
+  //create matrix for sigma points in measurement space
+	MatrixXd Zsig;
+
+  //measurement covariance matrix_ S
+	MatrixXd S;
 
   /**
    * Constructor

@@ -88,6 +88,14 @@ UKF::UKF() {
 	z_out_ = 0;
 	S_out_ = 0;
 
+	z_pred = VectorXd(n_z_);
+
+	//create matrix for sigma points in measurement space
+	Zsig = MatrixXd(n_z_, 2 * n_aug_ + 1);
+
+	//measurement covariance matrix_ S
+	S = MatrixXd(n_z_,n_z_);
+
 }
 
 UKF::~UKF() {}
@@ -144,6 +152,8 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     // done initializing, no need to predict or update
     is_initialized_ = true;
     return;
+
+	}
 
 }
 
@@ -293,9 +303,6 @@ void UKF::Prediction(double delta_t) {
 	// Predict Radar Measurement
 	//**********
 
-	//create matrix_ for sigma points in measurement space
-	MatrixXd Zsig = MatrixXd(n_z_, 2 * n_aug_ + 1);
-
 	//transform sigma points into measurement space
 	for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //2n+1 simga points
 
@@ -315,14 +322,11 @@ void UKF::Prediction(double delta_t) {
 	}
 
 	//mean predicted measurement
-	VectorXd z_pred = VectorXd(n_z_);
 	z_pred.fill(0.0);
 	for (int i=0; i < 2*n_aug_+1; i++) {
 		z_pred = z_pred + weights_(i) * Zsig.col(i);
 	}
 
-	//measurement covariance matrix_ S
-	MatrixXd S = MatrixXd(n_z_,n_z_);
 	S.fill(0.0);
 	for (int i = 0; i < 2 * n_aug_ + 1; i++) {  //2n+1 simga points
 		//residual
@@ -337,9 +341,9 @@ void UKF::Prediction(double delta_t) {
 
 	//add measurement noise covariance matrix
 	MatrixXd R = MatrixXd(n_z_,n_z_);
-	R <<    std_radr*std_radr, 0, 0,
-					0, std_radphi*std_radphi, 0,
-					0, 0,std_radrd*std_radrd;
+	R <<    std_radr_*std_radr_, 0, 0,
+					0, std_radphi_*std_radphi_, 0,
+					0, 0,std_radrd_*std_radrd_;
 	S = S + R;
 
 }
@@ -357,7 +361,6 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 
 	You'll also need to calculate the lidar NIS.
 	*/
-	ukf.UpdateState(&x_out, &P_out);
 }
 
 /**
@@ -373,14 +376,10 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 
 	You'll also need to calculate the radar NIS.
 	*/
-	ukf.UpdateState(&x_out, &P_out);
-}
 
-//**********
-// UKF Update
-//**********
-
-void UKF::UpdateState(VectorXd* x_out, MatrixXd* P_out) {
+	//**********
+	// UKF Update
+	//**********
 
 	//create matrix_ for cross correlation Tc
 	MatrixXd Tc = MatrixXd(n_x_, n_z_);
@@ -417,9 +416,5 @@ void UKF::UpdateState(VectorXd* x_out, MatrixXd* P_out) {
 	//update state mean and covariance matrix
 	x_ = x_ + K * z_diff;
 	P_ = P_ - K*S*K.transpose();
-
-	//write result
-  *x_out = x;
-  *P_out = P;
 
 }
