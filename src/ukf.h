@@ -67,6 +67,8 @@ public:
   ///* Sigma point spreading parameter
   double lambda_;
 
+  int n_z_;
+
 	VectorXd z_pred;
 
   //create matrix for sigma points in measurement space
