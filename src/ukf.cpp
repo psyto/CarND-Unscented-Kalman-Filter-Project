@@ -80,15 +80,6 @@ UKF::UKF() {
 	///* Sigma point spreading parameter
 	lambda_ = 3 - n_x_;
 
-	//create sigma point matrix
-	MatrixXd Xsig_ = MatrixXd(n_x_, 2 * n_x_ + 1);
-
-	//create sigma point matrix
-	MatrixXd Xsig_aug_ = MatrixXd(n_aug, 2 * n_aug + 1);
-
-	//create matrix_ with predicted sigma points as columns
-	MatrixXd Xsig_pred_ = MatrixXd(n_x_, 2 * n_aug + 1);
-
 	Q_ = 0;
 	R_laser_ = 0;
 	R_radar_ = 0;
@@ -173,6 +164,9 @@ void UKF::Prediction(double delta_t) {
 	// Generating Sigma Points
 	//**********
 
+	//create sigma point matrix
+	MatrixXd Xsig_ = MatrixXd(n_x_, 2 * n_x_ + 1);
+
 	//calculate square root of P
 	MatrixXd A = P_.llt().matrixL();
 
@@ -189,6 +183,9 @@ void UKF::Prediction(double delta_t) {
 	//**********
 	// Augmentation
 	//**********
+
+	//create sigma point matrix
+	MatrixXd Xsig_aug_ = MatrixXd(n_aug, 2 * n_aug + 1);
 
 	//create augmented mean vector
 	VectorXd x_aug = VectorXd(7);
