@@ -65,6 +65,7 @@ UKF::UKF() {
 	weights_ = VectorXd(2 * n_aug_ + 1);
 
 	//set vector for weights
+	double weight_0 = lambda_/(lambda_+n_aug_);
 	weights_(0) = weight_0;
 	for (int i=1; i<2*n_aug_+1; i++) {
 		double weight = 0.5/(n_aug_+lambda_);
@@ -88,7 +89,7 @@ UKF::UKF() {
 	//z_out_ = 0;
 	//S_out_ = 0;
 
-	n_z_ =
+	n_z_ = 5;
 
 	z_pred = VectorXd(n_z_);
 
@@ -119,14 +120,14 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   if (!is_initialized_) {
     /**
     TODO:
-      * Initialize the state ekf_.x_ with the first measurement.
+      * Initialize the state x_ with the first measurement.
       * Create the covariance matrix.
       * Remember: you'll need to convert radar from polar to cartesian coordinates.
     */
     // first measurement
     cout << "EKF: " << endl;
-    ekf_.x_ = VectorXd(4);
-    ekf_.x_ << 1, 1, 1, 1;
+    x_ = VectorXd(4);
+    x_ << 1, 1, 1, 1;
 
     if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
       /**
@@ -136,20 +137,20 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       float theta = meas_package.raw_measurements_(1);
       float ro_dot = meas_package.raw_measurements_(2);
 
-      ekf_.x_(0) = ro * cos(theta);
-      ekf_.x_(1) = ro * sin(theta);
-      ekf_.x_(2) = ro_dot * cos(theta);
-      ekf_.x_(3) = ro_dot * sin(theta);
+      x_(0) = ro * cos(theta);
+      x_(1) = ro * sin(theta);
+      x_(2) = ro_dot * cos(theta);
+      x_(3) = ro_dot * sin(theta);
     }
     else if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
       /**
       Initialize state.
       */
-      ekf_.x_(0) = meas_package.raw_measurements_(0);
-      ekf_.x_(1) = meas_package.raw_measurements_(1);
+      x_(0) = meas_package.raw_measurements_(0);
+      x_(1) = meas_package.raw_measurements_(1);
     }
 
-    previous_timestamp_ = meas_package.timestamp_;
+    //previous_timestamp_ = meas_package.timestamp_;
 
     // done initializing, no need to predict or update
     is_initialized_ = true;
@@ -231,7 +232,7 @@ void UKF::Prediction(double delta_t) {
 	// Sigma Point Prediction
 	//**********
 
-	double delta_t = 0.1; //time diff in sec
+	//double delta_t = 0.1; //time diff in sec
 
 	//predict sigma points
 	for (int i = 0; i< 2*n_aug_+1; i++)
