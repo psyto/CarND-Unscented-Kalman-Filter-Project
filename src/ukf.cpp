@@ -89,15 +89,15 @@ UKF::UKF() {
 	//z_out_ = 0;
 	//S_out_ = 0;
 
-	n_z_ = 5;
+	//n_z_ = 5;
 
-	z_pred = VectorXd(n_z_);
+	//z_pred = VectorXd(n_z_);
 
 	//create matrix for sigma points in measurement space
-	Zsig = MatrixXd(n_z_, 2 * n_aug_ + 1);
+	//Zsig = MatrixXd(n_z_, 2 * n_aug_ + 1);
 
 	//measurement covariance matrix_ S
-	S = MatrixXd(n_z_,n_z_);
+	//S = MatrixXd(n_z_,n_z_);
 
 }
 
@@ -125,9 +125,9 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       * Remember: you'll need to convert radar from polar to cartesian coordinates.
     */
     // first measurement
-    cout << "EKF: " << endl;
-    x_ = VectorXd(4);
-    x_ << 1, 1, 1, 1;
+    //cout << "EKF: " << endl;
+    //x_ = VectorXd(4);
+    //x_ << 1, 1, 1, 1;
 
     if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
       /**
@@ -156,6 +156,14 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     is_initialized_ = true;
     return;
 
+	}
+
+	Predication(delta_t);
+
+	if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
+		UpdateRadar(meas_package);
+	} else if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
+		UpdateLidar(meas_package);
 	}
 
 }
