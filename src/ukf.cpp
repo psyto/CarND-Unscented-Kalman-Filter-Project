@@ -302,6 +302,35 @@ void UKF::Prediction(double delta_t) {
 		P_ = P_ + weights_(i) * x_diff * x_diff.transpose() ;
 	}
 
+/**
+ * Updates the state and the state covariance matrix_ using a laser measurement.
+ * @param {MeasurementPackage} meas_package
+ */
+void UKF::UpdateLidar(MeasurementPackage meas_package) {
+	/**
+	TODO:
+
+	Complete this function! Use lidar data to update the belief about the object's
+	position. Modify the state vector, x_, and covariance, P_.
+
+	You'll also need to calculate the lidar NIS.
+	*/
+}
+
+/**
+ * Updates the state and the state covariance matrix_ using a radar measurement.
+ * @param {MeasurementPackage} meas_package
+ */
+void UKF::UpdateRadar(MeasurementPackage meas_package) {
+	/**
+	TODO:
+
+	Complete this function! Use radar data to update the belief about the object's
+	position. Modify the state vector, x_, and covariance, P_.
+
+	You'll also need to calculate the radar NIS.
+	*/
+
 	//**********
 	// Predict Radar Measurement
 	//**********
@@ -350,35 +379,6 @@ void UKF::Prediction(double delta_t) {
 	S = S + R;
 
 }
-
-/**
- * Updates the state and the state covariance matrix_ using a laser measurement.
- * @param {MeasurementPackage} meas_package
- */
-void UKF::UpdateLidar(MeasurementPackage meas_package) {
-	/**
-	TODO:
-
-	Complete this function! Use lidar data to update the belief about the object's
-	position. Modify the state vector, x_, and covariance, P_.
-
-	You'll also need to calculate the lidar NIS.
-	*/
-}
-
-/**
- * Updates the state and the state covariance matrix_ using a radar measurement.
- * @param {MeasurementPackage} meas_package
- */
-void UKF::UpdateRadar(MeasurementPackage meas_package) {
-	/**
-	TODO:
-
-	Complete this function! Use radar data to update the belief about the object's
-	position. Modify the state vector, x_, and covariance, P_.
-
-	You'll also need to calculate the radar NIS.
-	*/
 
 	//**********
 	// UKF Update
