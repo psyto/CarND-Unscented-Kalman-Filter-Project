@@ -150,7 +150,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       x_(1) = meas_package.raw_measurements_(1);
     }
 
-    //previous_timestamp_ = meas_package.timestamp_;
+    time_us_ = meas_package.timestamp_;
 
     // done initializing, no need to predict or update
     is_initialized_ = true;
@@ -158,7 +158,10 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 
 	}
 
-	Predication(delta_t);
+	double delta_t = (meas_package.timestamp_ - time_us_) / 1000000.0;
+	time_us_ = meas_package.timestamp_;
+
+	Prediction(delta_t);
 
 	if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
 		UpdateRadar(meas_package);
