@@ -341,16 +341,10 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
 		// extract values for better readibility
 		double p_x = Xsig_pred_(0,i);
 		double p_y = Xsig_pred_(1,i);
-		double v  = Xsig_pred_(2,i);
-		double yaw = Xsig_pred_(3,i);
-
-		double v1 = cos(yaw)*v;
-		double v2 = sin(yaw)*v;
 
 		// measurement model
-		Zsig(0,i) = sqrt(p_x*p_x + p_y*p_y);                        //r
-		Zsig(1,i) = atan2(p_y,p_x);                                 //phi
-		Zsig(2,i) = (p_x*v1 + p_y*v2 ) / sqrt(p_x*p_x + p_y*p_y);   //r_dot
+		Zsig(0,i) = p_x;
+		Zsig(1,i) = p_y;
 	}
 
 	//mean predicted measurement
@@ -437,7 +431,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
 	//**********
 	// Predict Radar Measurement
 	//**********
-	
+
 	VectorXd z = meas_package.raw_measurements_;
 
 	//transform sigma points into measurement space
