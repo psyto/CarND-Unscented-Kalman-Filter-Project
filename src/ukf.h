@@ -67,15 +67,8 @@ public:
   ///* Sigma point spreading parameter
   double lambda_;
 
-  int n_z_;
-
-	VectorXd z_pred;
-
-  //create matrix for sigma points in measurement space
-	MatrixXd Zsig;
-
-  //measurement covariance matrix_ S
-	MatrixXd S;
+  double NIS_radar_;
+  double NIS_laser_;
 
   /**
    * Constructor
